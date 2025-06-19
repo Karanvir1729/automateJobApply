@@ -103,20 +103,25 @@ const writeConfig = async (config) => {
   }
 };
 
+// Error handling middleware
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 // API Routes
 
 // Get all jobs
-app.get('/api/jobs', async (req, res) => {
+app.get('/api/jobs', asyncHandler(async (req, res) => {
   const jobs = await readJobs();
   res.json(jobs);
-});
+}));
 
 // Add new job
-app.post('/api/jobs', async (req, res) => {
+app.post('/api/jobs', asyncHandler(async (req, res) => {
   const { title, company, url } = req.body;
   
   if (!title || !company || !url) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    return res.status(400).json({ error: 'Missing required fields: title, company, and url are required' });
   }
 
   const jobs = await readJobs();
@@ -133,29 +138,36 @@ app.post('/api/jobs', async (req, res) => {
   await writeJobs(jobs);
   
   res.json(newJob);
-});
+}));
 
 // Get configuration
-app.get('/api/config', async (req, res) => {
+app.get('/api/config', asyncHandler(async (req, res) => {
   const config = await readConfig();
+  if (!config) {
+    return res.status(500).json({ error: 'Failed to read configuration' });
+  }
   res.json(config);
-});
+}));
 
 // Save configuration
-app.post('/api/config', async (req, res) => {
+app.post('/api/config', asyncHandler(async (req, res) => {
+  if (!req.body || typeof req.body !== 'object') {
+    return res.status(400).json({ error: 'Invalid configuration data' });
+  }
+  
   await writeConfig(req.body);
   res.json({ success: true });
-});
+}));
 
 // Process specific job
-app.post('/api/process-job', async (req, res) => {
-  try {
-    const { jobId, userEmail } = req.body;
-    
-    if (!jobId || !userEmail) {
-      return res.status(400).json({ error: 'Missing jobId or userEmail' });
-    }
+app.post('/api/process-job', asyncHandler(async (req, res) => {
+  const { jobId, userEmail } = req.body;
+  
+  if (!jobId || !userEmail) {
+    return res.status(400).json({ error: 'Missing jobId or userEmail' });
+  }
 
+  try {
     // Import and run the job processor for specific job
     const { processSpecificJob } = await import('./process-jobs.js');
     const result = await processSpecificJob(jobId, userEmail);
@@ -163,12 +175,12 @@ app.post('/api/process-job', async (req, res) => {
     res.json({ success: true, result });
   } catch (error) {
     console.error('Error processing job:', error);
-    res.status(500).json({ error: 'Failed to process job' });
+    res.status(500).json({ error: `Failed to process job: ${error.message}` });
   }
-});
+}));
 
 // Process jobs
-app.post('/api/process-jobs', async (req, res) => {
+app.post('/api/process-jobs', asyncHandler(async (req, res) => {
   try {
     // Import and run the job processor
     const { processJobs } = await import('./process-jobs.js');
@@ -176,27 +188,37 @@ app.post('/api/process-jobs', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Error processing jobs:', error);
-    res.status(500).json({ error: 'Failed to process jobs' });
+    res.status(500).json({ error: `Failed to process jobs: ${error.message}` });
   }
-});
+}));
 
 // Send email for a specific job
-app.post('/api/send-email', async (req, res) => {
+app.post('/api/send-email', asyncHandler(async (req, res) => {
+  const { jobId } = req.body;
+  
+  if (!jobId) {
+    return res.status(400).json({ error: 'Missing jobId' });
+  }
+  
   try {
-    const { jobId } = req.body;
     const { sendJobEmail } = await import('./email-service.js');
     await sendJobEmail(jobId);
     res.json({ success: true });
   } catch (error) {
     console.error('Error sending email:', error);
-    res.status(500).json({ error: 'Failed to send email' });
+    res.status(500).json({ error: `Failed to send email: ${error.message}` });
   }
-});
+}));
 
 // Scrape jobs
-app.post('/api/scrape-jobs', async (req, res) => {
+app.post('/api/scrape-jobs', asyncHandler(async (req, res) => {
+  const { query, location, sources } = req.body;
+  
+  if (!query || !location) {
+    return res.status(400).json({ error: 'Missing required fields: query and location are required' });
+  }
+  
   try {
-    const { query, location, sources } = req.body;
     const { autoAddScrapedJobs } = await import('./job-scraper.js');
     
     const searchParams = {
@@ -209,8 +231,17 @@ app.post('/api/scrape-jobs', async (req, res) => {
     res.json({ success: true, jobsAdded: newJobs.length, jobs: newJobs });
   } catch (error) {
     console.error('Error scraping jobs:', error);
-    res.status(500).json({ error: 'Failed to scrape jobs' });
+    res.status(500).json({ error: `Failed to scrape jobs: ${error.message}` });
   }
+}));
+
+// Global error handler
+app.use((error, req, res, next) => {
+  console.error('Unhandled error:', error);
+  res.status(500).json({ 
+    error: `Internal server error: ${error.message}`,
+    stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+  });
 });
 
 // Serve static files in production

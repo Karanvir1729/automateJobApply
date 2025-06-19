@@ -30,10 +30,11 @@ interface Job {
 interface QuickApplyProps {
   jobs: Job[];
   onJobProcessed: () => void;
+  onError: (error: string) => void;
   darkMode: boolean;
 }
 
-const QuickApply: React.FC<QuickApplyProps> = ({ jobs, onJobProcessed, darkMode }) => {
+const QuickApply: React.FC<QuickApplyProps> = ({ jobs, onJobProcessed, onError, darkMode }) => {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [userEmail, setUserEmail] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -59,17 +60,25 @@ const QuickApply: React.FC<QuickApplyProps> = ({ jobs, onJobProcessed, darkMode 
         })
       });
 
-      if (response.ok) {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
         setProcessedJobs(prev => new Set([...prev, selectedJob.id]));
         onJobProcessed();
         setShowEmailModal(false);
         setSelectedJob(null);
       } else {
-        throw new Error('Failed to process job');
+        const errorMsg = result.error || 'Failed to process job';
+        onError(`Job processing failed: ${errorMsg}`);
       }
     } catch (error) {
       console.error('Error processing job:', error);
-      alert('Failed to process job. Please try again.');
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred while processing job';
+      onError(`Job processing error: ${errorMsg}`);
     } finally {
       setIsProcessing(false);
     }

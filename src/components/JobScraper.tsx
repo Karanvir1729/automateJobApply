@@ -14,10 +14,11 @@ interface Config {
 interface JobScraperProps {
   config: Config | null;
   onJobsScraped: () => void;
+  onError: (error: string) => void;
   darkMode: boolean;
 }
 
-const JobScraper: React.FC<JobScraperProps> = ({ config, onJobsScraped, darkMode }) => {
+const JobScraper: React.FC<JobScraperProps> = ({ config, onJobsScraped, onError, darkMode }) => {
   const [searchParams, setSearchParams] = useState({
     query: config?.jobSearch?.defaultQuery || 'software engineer',
     location: config?.jobSearch?.defaultLocation || 'San Francisco, CA',
@@ -42,7 +43,7 @@ const JobScraper: React.FC<JobScraperProps> = ({ config, onJobsScraped, darkMode
 
   const handleScrape = async () => {
     if (searchParams.sources.length === 0) {
-      alert('Please select at least one job source');
+      onError('Please select at least one job source');
       return;
     }
 
@@ -56,6 +57,10 @@ const JobScraper: React.FC<JobScraperProps> = ({ config, onJobsScraped, darkMode
         body: JSON.stringify(searchParams)
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const result = await response.json();
       
       if (result.success) {
@@ -65,16 +70,20 @@ const JobScraper: React.FC<JobScraperProps> = ({ config, onJobsScraped, darkMode
         });
         onJobsScraped();
       } else {
+        const errorMsg = result.error || 'Failed to scrape jobs. Please check your configuration.';
+        onError(`Job scraping failed: ${errorMsg}`);
         setLastResult({
           jobsAdded: 0,
-          message: 'Failed to scrape jobs. Please check your configuration.'
+          message: errorMsg
         });
       }
     } catch (error) {
       console.error('Error scraping jobs:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred while scraping jobs';
+      onError(`Job scraping error: ${errorMsg}`);
       setLastResult({
         jobsAdded: 0,
-        message: 'Error occurred while scraping jobs.'
+        message: errorMsg
       });
     } finally {
       setIsLoading(false);

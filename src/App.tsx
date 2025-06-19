@@ -24,6 +24,7 @@ import ConfigPanel from './components/ConfigPanel';
 import JobDetails from './components/JobDetails';
 import JobScraper from './components/JobScraper';
 import QuickApply from './components/QuickApply';
+import ErrorDisplay from './components/ErrorDisplay';
 
 interface Job {
   id: string;
@@ -78,29 +79,48 @@ function App() {
   const [config, setConfig] = useState<Config | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
 
   useEffect(() => {
     fetchJobs();
     fetchConfig();
   }, []);
 
+  const addError = (error: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const errorWithTimestamp = `[${timestamp}] ${error}`;
+    setErrors(prev => [...prev, errorWithTimestamp]);
+  };
+
+  const removeError = (index: number) => {
+    setErrors(prev => prev.filter((_, i) => i !== index));
+  };
+
   const fetchJobs = async () => {
     try {
       const response = await fetch('/api/jobs');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch jobs: HTTP ${response.status}`);
+      }
       const data = await response.json();
       setJobs(data);
     } catch (error) {
       console.error('Failed to fetch jobs:', error);
+      addError(`Failed to fetch jobs: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
   const fetchConfig = async () => {
     try {
       const response = await fetch('/api/config');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch config: HTTP ${response.status}`);
+      }
       const data = await response.json();
       setConfig(data);
     } catch (error) {
       console.error('Failed to fetch config:', error);
+      addError(`Failed to fetch config: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -111,12 +131,16 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(jobData)
       });
-      if (response.ok) {
-        fetchJobs();
-        setCurrentView('dashboard');
+      
+      if (!response.ok) {
+        throw new Error(`Failed to add job: HTTP ${response.status}`);
       }
+      
+      await fetchJobs();
+      setCurrentView('dashboard');
     } catch (error) {
       console.error('Failed to add job:', error);
+      addError(`Failed to add job: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -124,11 +148,13 @@ function App() {
     setIsProcessing(true);
     try {
       const response = await fetch('/api/process-jobs', { method: 'POST' });
-      if (response.ok) {
-        fetchJobs();
+      if (!response.ok) {
+        throw new Error(`Failed to process jobs: HTTP ${response.status}`);
       }
+      await fetchJobs();
     } catch (error) {
       console.error('Failed to process jobs:', error);
+      addError(`Failed to process jobs: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsProcessing(false);
     }
@@ -141,12 +167,16 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newConfig)
       });
-      if (response.ok) {
-        setConfig(newConfig);
-        setCurrentView('dashboard');
+      
+      if (!response.ok) {
+        throw new Error(`Failed to save config: HTTP ${response.status}`);
       }
+      
+      setConfig(newConfig);
+      setCurrentView('dashboard');
     } catch (error) {
       console.error('Failed to save config:', error);
+      addError(`Failed to save config: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -174,6 +204,16 @@ function App() {
     <div className={`min-h-screen transition-colors duration-200 ${
       darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
     }`}>
+      {/* Error Display */}
+      {errors.map((error, index) => (
+        <ErrorDisplay
+          key={index}
+          error={error}
+          onDismiss={() => removeError(index)}
+          darkMode={darkMode}
+        />
+      ))}
+
       {/* Header */}
       <header className={`border-b transition-colors duration-200 ${
         darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
@@ -262,6 +302,7 @@ function App() {
           <QuickApply 
             jobs={pendingJobs} 
             onJobProcessed={fetchJobs}
+            onError={addError}
             darkMode={darkMode}
           />
         )}
@@ -278,6 +319,7 @@ function App() {
           <JobScraper 
             config={config}
             onJobsScraped={fetchJobs}
+            onError={addError}
             darkMode={darkMode}
           />
         )}
