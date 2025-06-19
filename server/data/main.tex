@@ -1,0 +1,197 @@
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+\pdfgentounicode=1
+
+\newcommand{\resumeItem}[1]{\item\small{#1 \vspace{-2pt}}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]} 
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\Huge \scshape Karanvir (Karan) Khanna} \\ \vspace{1pt}
+    \small \href{https://github.com/Karanvir1729}{GitHub} $|$ \href{https://dev4897.d33fztxxmn8ouq.amplifyapp.com/}{Portfolio} $|$
+    \href{https://www.linkedin.com/in/karan-khanna-b7013b24b/}{LinkedIn} $|$
+    +1 416-347-3761 $|$ \href{mailto:prokaranvir@gmail.com}{prokaranvir@gmail.com}
+\end{center}
+
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading
+{University of Toronto}{Toronto, ON}
+{Bachelor of Science in Computer Science, Minor in Math + Co-op (PEY)}{Sep. 2021 -- Apr. 2026}
+\resumeItemListStart
+\resumeItem{Relevant Coursework: Operating Systems, AI, Functional Programming, Unix Tools, Cybersecurity, Algorithm Design, Databases, Software Design, Statistics}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Technical Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+\small{
+\item{\textbf{Languages}{: Java, Python, C/C++, JavaScript, TypeScript, Bash, SQL, PHP, Assembly (x86)} \\
+\textbf{Frameworks \& Tools}{: Node.js, Flask, Django, TensorFlow, PyTorch, scikit-learn, pandas, NumPy, Selenium, JUnit, LaTeX, Pyomo, SCIP, CPLEX} \\
+\textbf{Optimization}{: MINLP, nonlinear solvers, multistage model design} \\
+\textbf{Infrastructure}{: NGINX, DigitalOcean, MongoDB, Conda, Ubuntu, WordPress} \\
+\textbf{DevOps}{: Git, Bitbucket, GitHub, GitHub Actions, CI/CD, JSON, REST, Shell scripting} \\
+\textbf{Cloud \& APIs}{: AWS, Azure, OpenAI API, Google Apps Script, Amazon Rainforest API} \\
+\textbf{Security}{: CAPTCHA, SQLmap, Ghidra, Burp Suite, Wireshark, WPScan, cryptographic tools}
+}}
+\end{itemize}
+\section{Experience}
+\resumeSubHeadingListStart
+
+\resumeSubheading
+{AI Intern: Data Management and Governance}{May 2023 -- Oct. 2023}
+{KPMG LLP}{Toronto, ON}
+\resumeItemListStart
+  \resumeItem{\textbf{Prototyping:} Developed interactive AI demos using ChatGPT to streamline Data Management and Governance workflows}
+  \resumeItem{\textbf{System design:} Built prototypes including mock UIs, data pipelines, and automation algorithms for inventory management systems}
+  \resumeItem{\textbf{Optimization:} Applied Naive Bayes, Dynamic Programming, and Greedy techniques to optimize sub-tasks in internal tools}
+  \resumeItem{\textbf{Tool evaluation:} Assisted in evaluating platforms like Informatica, Microsoft Purview, and Collibra for enterprise data use}
+  \resumeItem{\textbf{Cloud strategy:} Outlined potential integrations with AWS and Azure for long-term cloud scalability}
+  \resumeItem{\textbf{Playbook:} Authored the firm's internal Data Governance and Data Management Playbook, defining best practices, tooling standards, and architectural guidelines across teams}
+\resumeItemListEnd
+
+\resumeSubheading
+{E-commerce Software Developer}{June 2024 -- Present}
+{IPPINKA}{Toronto, ON}
+\resumeItemListStart
+  \resumeItem{\textbf{Business model:} IPPINKA is a curated e-commerce retailer with over 5,000 product listings, selling primarily on Amazon and acting as a middle layer between independent designers and global buyers}
+  \resumeItem{\textbf{Backend:} Built and maintained backend infrastructure using Node.js, TypeScript, and Google Apps Script to streamline listing management, PO automation, and inventory operations}
+  \resumeItem{\textbf{Caching:} Developed a metadata-aware caching system for Google Sheets to reduce API usage and accelerate runtime across distributed update flows}
+  \resumeItem{\textbf{Automation:} Built automation scripts in Google Apps Script and Node.js for syncing spreadsheets and managing FBA prep workflows}
+  \resumeItem{\textbf{Email integration:} Integrated Flodesk with internal systems to automate email marketing flows and sync customer segments for product-specific campaigns}
+  \resumeItem{\textbf{Forecasting:} Designed and deployed a demand forecasting pipeline using 10+ years of sales data, integrating seasonality, holidays, and customer psychology to guide purchasing decisions}
+  \resumeItem{\textbf{Data management:} Set up and managed a MongoDB instance to store and query 10+ years of sales and shipment data used across forecasting, PO generation, and FBA tracking pipelines}
+  \resumeItem{\textbf{PO automation:} Led full-stack automation of the PO pipeline including:
+    \begin{itemize}
+      \item \textbf{Solver logic:} PO builder that replicates human-like viability checks using SCIP and CPLEX solvers for nonlinear constraints
+      \item \textbf{Resilience:} Integrated exponential backoff logic to reduce solver timeouts and improve numerical stability
+      \item \textbf{Tracking tools:} Automated supplier communication via invoice upload and box tracking web apps
+    \end{itemize}}
+  \resumeItem{\textbf{Bundling strategy (CPLEX):} Designed a reallocation model that shifts units between bundles and singles based on post-arrival demand; used CPLEX to minimize variance between projected bundle uptake and live demand multipliers}
+  \resumeItem{\textbf{FBA compliance:} Built a Box Content Upload app for Amazon Seller Central to automate shipment data submission}
+  \resumeItem{\textbf{Kitting:} Engineered Amazon kitting workflows to efficiently prep and ship bundles with minimal manual effort}
+  \resumeItem{\textbf{Review analysis:} Integrated Rainforest API to monitor review velocity and sentiment across top listings}
+  \resumeItem{\textbf{Security:} Hardened internal tooling with CAPTCHA to block bots and automated threats}
+  \resumeItem{\textbf{Hiring \& onboarding:} Led hiring for new developers — screened 500+ candidates and onboarded 2 engineers with custom ramp-up documentation and mentorship}
+  \resumeItem{\textbf{Codebase stewardship:} Maintained critical backend modules and created internal documentation for dev workflows, logic, and deployment processes}
+  \resumeItem{\textbf{Project management migration:} Migrated task and sprint infrastructure from Pivotal Tracker (sunset) to Jira, including schema conversion and developer training}
+  \resumeItem{\textbf{Solver env:} Configured Node.js infrastructure to support conda-based SCIP/CPLEX workflows, including subprocess logic and venv startup}
+  \resumeItem{\textbf{Monitoring:} Deployed and monitored services on DigitalOcean using NGINX and custom metrics dashboards}
+\resumeItemListEnd
+
+\section{Projects}
+\vspace{-3pt}
+Selected projects shown below — more available at \href{https://github.com/Karanvir1729}{\texttt{github.com/Karanvir1729}}
+\normalsize
+
+\resumeSubHeadingListStart
+\resumeProjectHeading
+{\textbf{Nettoyer (UofT Hacks Runner-up)} $|$ \emph{Cohere AI, Python, Flutter}}{}
+\resumeItemListStart
+  \resumeItem{Built a decentralization-focused content filtering platform with real-time toxicity detection using Cohere}
+  \resumeItem{Automated YouTube engagement actions (e.g., liking) to support user mental wellness tags and safe themes}
+  \resumeItem{Delivered production-ready frontend in under 4 hours during hackathon sprint}
+\resumeItemListEnd
+
+\resumeProjectHeading
+{\textbf{Hijacking System Calls} $|$ \emph{Linux Kernel, C}}{}
+\resumeItemListStart
+  \resumeItem{Implemented kernel-level modules to intercept and log low-level system calls such as \texttt{read()}, \texttt{write()}, and \texttt{open()}}
+\resumeItemListEnd
+
+\resumeProjectHeading
+{\textbf{Essay Research Bot (Deer Hacks Winner)} $|$ \emph{Python, Flask, UiPath}}{}
+\resumeItemListStart
+  \resumeItem{Built an automated essay research tool using Google APIs and web scraping}
+  \resumeItem{Integrated UiPath to handle repetitive research workflows and generate citations}
+  \resumeItem{Project link: \href{https://devpost.com/software/definition-finder}{definition-finder on Devpost}}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\section{Research}
+\resumeSubHeadingListStart
+
+\resumeProjectHeading
+{\textbf{Matroid Theory Research} $|$ \emph{University of Toronto}}{May 2023 – Sep. 2023}
+\resumeItemListStart
+  \resumeItem{Explored combinatorial techniques for computing the volume of polar duals of matroid polytopes}
+  \resumeItem{Authored Sage code to test conjectures on uniform matroids using symbolic computation and case analysis}
+  \resumeItem{Contributed to the theoretical framework that enables volume estimation for classes of matroids}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\section{Certifications and Awards}
+\resumeSubHeadingListStart
+
+\resumeSubheading
+{Certified Data Management Professional (CDMP)}{Aug 2023}
+{Data Management Association (DAMA)}{}
+\resumeItemListStart
+  \resumeItem{Scored in the top 10\% of 4,562+ professionals globally on the CDMP foundation exam}
+\resumeItemListEnd
+
+\resumeSubheading
+{Dean's List}{2021 – Present}
+{University of Toronto}{}
+\resumeItemListStart
+  \resumeItem{GPA consistently above 3.5; top 10\% of the faculty cohort}
+\resumeItemListEnd
+
+\resumeSubheading
+{Deer Hacks Winner}{Apr 2022}
+{University of Toronto}{}
+\resumeItemListStart
+  \resumeItem{Built an AI-powered academic research assistant and won best overall project}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\end{document}
