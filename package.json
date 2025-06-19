@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"npm run server\" \"vite\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -28,7 +28,8 @@
     "axios": "^1.6.0",
     "cheerio": "^1.0.0-rc.12",
     "linkedin-jobs-scraper": "^2.0.6",
-    "serpapi": "^2.0.0"
+    "serpapi": "^2.0.0",
+    "concurrently": "^8.2.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
