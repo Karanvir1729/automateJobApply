@@ -25,6 +25,7 @@ import JobDetails from './components/JobDetails';
 import JobScraper from './components/JobScraper';
 import QuickApply from './components/QuickApply';
 import ErrorDisplay from './components/ErrorDisplay';
+import { apiCall } from './config/api';
 
 interface Job {
   id: string;
@@ -98,11 +99,7 @@ function App() {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch('/api/jobs');
-      if (!response.ok) {
-        throw new Error(`Failed to fetch jobs: HTTP ${response.status}`);
-      }
-      const data = await response.json();
+      const data = await apiCall('/api/jobs');
       setJobs(data);
     } catch (error) {
       console.error('Failed to fetch jobs:', error);
@@ -112,11 +109,7 @@ function App() {
 
   const fetchConfig = async () => {
     try {
-      const response = await fetch('/api/config');
-      if (!response.ok) {
-        throw new Error(`Failed to fetch config: HTTP ${response.status}`);
-      }
-      const data = await response.json();
+      const data = await apiCall('/api/config');
       setConfig(data);
     } catch (error) {
       console.error('Failed to fetch config:', error);
@@ -126,15 +119,10 @@ function App() {
 
   const addJob = async (jobData: Omit<Job, 'id' | 'status' | 'dateAdded'>) => {
     try {
-      const response = await fetch('/api/jobs', {
+      await apiCall('/api/jobs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(jobData)
       });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to add job: HTTP ${response.status}`);
-      }
       
       await fetchJobs();
       setCurrentView('dashboard');
@@ -147,10 +135,7 @@ function App() {
   const processJobs = async () => {
     setIsProcessing(true);
     try {
-      const response = await fetch('/api/process-jobs', { method: 'POST' });
-      if (!response.ok) {
-        throw new Error(`Failed to process jobs: HTTP ${response.status}`);
-      }
+      await apiCall('/api/process-jobs', { method: 'POST' });
       await fetchJobs();
     } catch (error) {
       console.error('Failed to process jobs:', error);
@@ -162,15 +147,10 @@ function App() {
 
   const saveConfig = async (newConfig: Config) => {
     try {
-      const response = await fetch('/api/config', {
+      await apiCall('/api/config', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newConfig)
       });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to save config: HTTP ${response.status}`);
-      }
       
       setConfig(newConfig);
       setCurrentView('dashboard');

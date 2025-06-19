@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Globe, Search, Plus, CheckCircle, AlertCircle } from 'lucide-react';
+import { apiCall } from '../config/api';
 
 interface Config {
   jobSearch?: {
@@ -51,17 +52,10 @@ const JobScraper: React.FC<JobScraperProps> = ({ config, onJobsScraped, onError,
     setLastResult(null);
 
     try {
-      const response = await fetch('/api/scrape-jobs', {
+      const result = await apiCall('/api/scrape-jobs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(searchParams)
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
       
       if (result.success) {
         setLastResult({

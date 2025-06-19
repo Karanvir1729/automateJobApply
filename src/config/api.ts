@@ -1,6 +1,6 @@
 // API configuration for different environments
 const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://your-railway-app.railway.app' // You'll replace this with your Railway URL
+  ? 'https://your-railway-app-url.railway.app' // Replace with your actual Railway URL
   : 'http://localhost:3001';
 
 export const apiCall = async (endpoint: string, options: RequestInit = {}) => {

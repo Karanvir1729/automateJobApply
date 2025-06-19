@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Loader
 } from 'lucide-react';
+import { apiCall } from '../config/api';
 
 interface Job {
   id: string;
@@ -51,20 +52,13 @@ const QuickApply: React.FC<QuickApplyProps> = ({ jobs, onJobProcessed, onError, 
 
     setIsProcessing(true);
     try {
-      const response = await fetch('/api/process-job', {
+      const result = await apiCall('/api/process-job', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           jobId: selectedJob.id, 
           userEmail: userEmail 
         })
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
 
       if (result.success) {
         setProcessedJobs(prev => new Set([...prev, selectedJob.id]));
@@ -124,7 +118,7 @@ const QuickApply: React.FC<QuickApplyProps> = ({ jobs, onJobProcessed, onError, 
               <div
                 key={job.id}
                 onClick={() => !isProcessed && handleJobClick(job)}
-                className={`p-6 rounded-xl shadow-sm border transition-all cursor-pointer ${
+                className={`p-6 rounded-xl shadow-sm border transition-all cursor-pointer relative ${
                   isProcessed 
                     ? 'opacity-75 cursor-not-allowed' 
                     : 'hover:shadow-md hover:scale-105'
