@@ -14,13 +14,16 @@ import {
   Clock,
   Moon,
   Sun,
-  Globe
+  Globe,
+  Send,
+  Briefcase
 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import JobForm from './components/JobForm';
 import ConfigPanel from './components/ConfigPanel';
 import JobDetails from './components/JobDetails';
 import JobScraper from './components/JobScraper';
+import QuickApply from './components/QuickApply';
 
 interface Job {
   id: string;
@@ -69,7 +72,7 @@ interface Config {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'add-job' | 'config' | 'job-details' | 'scraper'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'add-job' | 'config' | 'job-details' | 'scraper' | 'quick-apply'>('quick-apply');
   const [jobs, setJobs] = useState<Job[]>([]);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [config, setConfig] = useState<Config | null>(null);
@@ -165,6 +168,8 @@ function App() {
     }
   };
 
+  const pendingJobs = jobs.filter(j => j.status === 'pending');
+
   return (
     <div className={`min-h-screen transition-colors duration-200 ${
       darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
@@ -180,7 +185,7 @@ function App() {
               <div className="flex items-center space-x-2">
                 {getStatusIcon('pending')}
                 <span className="text-sm font-medium">
-                  {jobs.filter(j => j.status === 'pending').length} Pending
+                  {pendingJobs.length} Available Jobs
                 </span>
               </div>
             </div>
@@ -199,15 +204,7 @@ function App() {
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
                 {isProcessing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                <span>{isProcessing ? 'Processing...' : 'Process Jobs'}</span>
-              </button>
-              
-              <button
-                onClick={() => setCurrentView('scraper')}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Globe className="w-4 h-4" />
-                <span>Scrape Jobs</span>
+                <span>{isProcessing ? 'Processing...' : 'Process All Jobs'}</span>
               </button>
               
               <button
@@ -236,6 +233,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8">
             {[
+              { key: 'quick-apply', label: 'Quick Apply', icon: Send },
               { key: 'dashboard', label: 'Dashboard', icon: Search },
               { key: 'scraper', label: 'Job Scraper', icon: Globe },
               { key: 'add-job', label: 'Add Job', icon: Plus },
@@ -260,6 +258,14 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {currentView === 'quick-apply' && (
+          <QuickApply 
+            jobs={pendingJobs} 
+            onJobProcessed={fetchJobs}
+            darkMode={darkMode}
+          />
+        )}
+        
         {currentView === 'dashboard' && (
           <Dashboard 
             jobs={jobs} 

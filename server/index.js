@@ -16,7 +16,9 @@ app.use(express.json());
 // Data storage paths
 const DATA_DIR = path.join(__dirname, 'data');
 const JOBS_FILE = path.join(DATA_DIR, 'jobs.json');
+const SAMPLE_JOBS_FILE = path.join(DATA_DIR, 'sample-jobs.json');
 const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
+const RESUME_FILE = path.join(DATA_DIR, 'resume.txt');
 
 // Ensure data directory exists
 await fs.mkdir(DATA_DIR, { recursive: true });
@@ -25,7 +27,13 @@ await fs.mkdir(DATA_DIR, { recursive: true });
 try {
   await fs.access(JOBS_FILE);
 } catch {
-  await fs.writeFile(JOBS_FILE, JSON.stringify([]));
+  // Copy sample jobs to main jobs file
+  try {
+    const sampleJobs = await fs.readFile(SAMPLE_JOBS_FILE, 'utf8');
+    await fs.writeFile(JOBS_FILE, sampleJobs);
+  } catch {
+    await fs.writeFile(JOBS_FILE, JSON.stringify([]));
+  }
 }
 
 try {
@@ -46,14 +54,14 @@ try {
       provider: 'tesseract'
     },
     resume: {
-      path: ''
+      path: RESUME_FILE
     },
     jobSearch: {
       serpApiKey: '',
       defaultQuery: 'software engineer',
-      defaultLocation: 'San Francisco, CA',
+      defaultLocation: 'Toronto, ON',
       autoScrape: false,
-      scrapeInterval: 24 // hours
+      scrapeInterval: 24
     }
   }));
 }
@@ -139,23 +147,23 @@ app.post('/api/config', async (req, res) => {
   res.json({ success: true });
 });
 
-// Scrape jobs
-app.post('/api/scrape-jobs', async (req, res) => {
+// Process specific job
+app.post('/api/process-job', async (req, res) => {
   try {
-    const { query, location, sources } = req.body;
-    const { autoAddScrapedJobs } = await import('./job-scraper.js');
+    const { jobId, userEmail } = req.body;
     
-    const searchParams = {
-      query: query || 'software engineer',
-      location: location || 'San Francisco, CA',
-      sources: sources || ['google', 'linkedin', 'indeed']
-    };
+    if (!jobId || !userEmail) {
+      return res.status(400).json({ error: 'Missing jobId or userEmail' });
+    }
+
+    // Import and run the job processor for specific job
+    const { processSpecificJob } = await import('./process-jobs.js');
+    const result = await processSpecificJob(jobId, userEmail);
     
-    const newJobs = await autoAddScrapedJobs(searchParams);
-    res.json({ success: true, jobsAdded: newJobs.length, jobs: newJobs });
+    res.json({ success: true, result });
   } catch (error) {
-    console.error('Error scraping jobs:', error);
-    res.status(500).json({ error: 'Failed to scrape jobs' });
+    console.error('Error processing job:', error);
+    res.status(500).json({ error: 'Failed to process job' });
   }
 });
 
@@ -182,6 +190,26 @@ app.post('/api/send-email', async (req, res) => {
   } catch (error) {
     console.error('Error sending email:', error);
     res.status(500).json({ error: 'Failed to send email' });
+  }
+});
+
+// Scrape jobs
+app.post('/api/scrape-jobs', async (req, res) => {
+  try {
+    const { query, location, sources } = req.body;
+    const { autoAddScrapedJobs } = await import('./job-scraper.js');
+    
+    const searchParams = {
+      query: query || 'software engineer',
+      location: location || 'Toronto, ON',
+      sources: sources || ['google', 'linkedin', 'indeed']
+    };
+    
+    const newJobs = await autoAddScrapedJobs(searchParams);
+    res.json({ success: true, jobsAdded: newJobs.length, jobs: newJobs });
+  } catch (error) {
+    console.error('Error scraping jobs:', error);
+    res.status(500).json({ error: 'Failed to scrape jobs' });
   }
 });
 

@@ -1,0 +1,77 @@
+Karanvir (Karan) Khanna
+GitHub: https://github.com/Karanvir1729 | Portfolio: https://dev4897.d33fztxxmn8ouq.amplifyapp.com/
+LinkedIn: https://www.linkedin.com/in/karan-khanna-b7013b24b/ | Phone: +1 416-347-3761 | Email: prokaranvir@gmail.com
+
+EDUCATION
+University of Toronto, Toronto, ON
+Bachelor of Science in Computer Science, Minor in Math + Co-op (PEY) | Sep. 2021 – Apr. 2026
+Relevant Coursework: Operating Systems, AI, Functional Programming, Unix Tools, Cybersecurity, Algorithm Design, Databases, Software Design, Statistics
+
+TECHNICAL SKILLS
+Languages: Java, Python, C/C++, JavaScript, TypeScript, Bash, SQL, PHP, Assembly (x86)
+Frameworks & Tools: Node.js, Flask, Django, TensorFlow, PyTorch, scikit-learn, pandas, NumPy, Selenium, JUnit, LaTeX, Pyomo, SCIP, CPLEX
+Optimization: MINLP, nonlinear solvers, multistage model design
+Infrastructure: NGINX, DigitalOcean, MongoDB, Conda, Ubuntu, WordPress
+DevOps: Git, Bitbucket, GitHub, GitHub Actions, CI/CD, JSON, REST, Shell scripting
+Cloud & APIs: AWS, Azure, OpenAI API, Google Apps Script, Amazon Rainforest API
+Security: CAPTCHA, SQLmap, Ghidra, Burp Suite, Wireshark, WPScan, cryptographic tools
+
+EXPERIENCE
+
+AI Intern: Data Management and Governance | KPMG LLP, Toronto, ON | May 2023 – Oct. 2023
+• Prototyping: Developed interactive AI demos using ChatGPT to streamline Data Management and Governance workflows
+• System design: Built prototypes including mock UIs, data pipelines, and automation algorithms for inventory management systems
+• Optimization: Applied Naive Bayes, Dynamic Programming, and Greedy techniques to optimize sub-tasks in internal tools
+• Tool evaluation: Assisted in evaluating platforms like Informatica, Microsoft Purview, and Collibra for enterprise data use
+• Cloud strategy: Outlined potential integrations with AWS and Azure for long-term cloud scalability
+• Playbook: Authored the firm's internal Data Governance and Data Management Playbook, defining best practices, tooling standards, and architectural guidelines across teams
+
+E-commerce Software Developer | IPPINKA, Toronto, ON | June 2024 – Present
+• Business model: IPPINKA is a curated e-commerce retailer with over 5,000 product listings, selling primarily on Amazon and acting as a middle layer between independent designers and global buyers
+• Backend: Built and maintained backend infrastructure using Node.js, TypeScript, and Google Apps Script to streamline listing management, PO automation, and inventory operations
+• Caching: Developed a metadata-aware caching system for Google Sheets to reduce API usage and accelerate runtime across distributed update flows
+• Automation: Built automation scripts in Google Apps Script and Node.js for syncing spreadsheets and managing FBA prep workflows
+• Email integration: Integrated Flodesk with internal systems to automate email marketing flows and sync customer segments for product-specific campaigns
+• Forecasting: Designed and deployed a demand forecasting pipeline using 10+ years of sales data, integrating seasonality, holidays, and customer psychology to guide purchasing decisions
+• Data management: Set up and managed a MongoDB instance to store and query 10+ years of sales and shipment data used across forecasting, PO generation, and FBA tracking pipelines
+• PO automation: Led full-stack automation of the PO pipeline including solver logic using SCIP and CPLEX solvers for nonlinear constraints, resilience with exponential backoff logic, and tracking tools for automated supplier communication
+• Bundling strategy (CPLEX): Designed a reallocation model that shifts units between bundles and singles based on post-arrival demand; used CPLEX to minimize variance between projected bundle uptake and live demand multipliers
+• FBA compliance: Built a Box Content Upload app for Amazon Seller Central to automate shipment data submission
+• Kitting: Engineered Amazon kitting workflows to efficiently prep and ship bundles with minimal manual effort
+• Review analysis: Integrated Rainforest API to monitor review velocity and sentiment across top listings
+• Security: Hardened internal tooling with CAPTCHA to block bots and automated threats
+• Hiring & onboarding: Led hiring for new developers — screened 500+ candidates and onboarded 2 engineers with custom ramp-up documentation and mentorship
+• Codebase stewardship: Maintained critical backend modules and created internal documentation for dev workflows, logic, and deployment processes
+• Project management migration: Migrated task and sprint infrastructure from Pivotal Tracker (sunset) to Jira, including schema conversion and developer training
+• Solver env: Configured Node.js infrastructure to support conda-based SCIP/CPLEX workflows, including subprocess logic and venv startup
+• Monitoring: Deployed and monitored services on DigitalOcean using NGINX and custom metrics dashboards
+
+PROJECTS
+Nettoyer (UofT Hacks Runner-up) | Cohere AI, Python, Flutter
+• Built a decentralization-focused content filtering platform with real-time toxicity detection using Cohere
+• Automated YouTube engagement actions (e.g., liking) to support user mental wellness tags and safe themes
+• Delivered production-ready frontend in under 4 hours during hackathon sprint
+
+Hijacking System Calls | Linux Kernel, C
+• Implemented kernel-level modules to intercept and log low-level system calls such as read(), write(), and open()
+
+Essay Research Bot (Deer Hacks Winner) | Python, Flask, UiPath
+• Built an automated essay research tool using Google APIs and web scraping
+• Integrated UiPath to handle repetitive research workflows and generate citations
+• Project link: https://devpost.com/software/definition-finder
+
+RESEARCH
+Matroid Theory Research | University of Toronto | May 2023 – Sep. 2023
+• Explored combinatorial techniques for computing the volume of polar duals of matroid polytopes
+• Authored Sage code to test conjectures on uniform matroids using symbolic computation and case analysis
+• Contributed to the theoretical framework that enables volume estimation for classes of matroids
+
+CERTIFICATIONS AND AWARDS
+Certified Data Management Professional (CDMP) | Data Management Association (DAMA) | Aug 2023
+• Scored in the top 10% of 4,562+ professionals globally on the CDMP foundation exam
+
+Dean's List | University of Toronto | 2021 – Present
+• GPA consistently above 3.5; top 10% of the faculty cohort
+
+Deer Hacks Winner | University of Toronto | Apr 2022
+• Built an AI-powered academic research assistant and won best overall project
