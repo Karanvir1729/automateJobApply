@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { getJson } from 'serpapi';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
@@ -44,97 +43,115 @@ const scrapeGoogleJobs = async (query, location, apiKey) => {
   try {
     console.log(`Scraping Google Jobs for: ${query} in ${location}`);
     
-    const response = await getJson({
-      engine: "google_jobs",
-      q: query,
-      location: location,
-      api_key: apiKey
+    if (!apiKey || apiKey.trim() === '') {
+      console.log('No SerpAPI key provided, skipping Google Jobs scraping');
+      return [];
+    }
+
+    const response = await axios.get('https://serpapi.com/search', {
+      params: {
+        engine: 'google_jobs',
+        q: query,
+        location: location,
+        api_key: apiKey,
+        num: 10
+      },
+      timeout: 10000
     });
 
-    const jobs = response.jobs_results || [];
+    const jobs = response.data.jobs_results || [];
     
     return jobs.map(job => ({
-      title: job.title,
-      company: job.company_name,
-      location: job.location,
-      description: job.description,
+      title: job.title || 'Unknown Title',
+      company: job.company_name || 'Unknown Company',
+      location: job.location || location,
+      description: job.description || 'No description available',
       url: job.share_link || job.related_links?.[0]?.link || '#',
       source: 'Google Jobs',
-      salary: job.salary,
-      posted_date: job.detected_extensions?.posted_at,
-      job_type: job.detected_extensions?.schedule_type
+      salary: job.salary || 'Not specified',
+      posted_date: job.detected_extensions?.posted_at || new Date().toISOString(),
+      job_type: job.detected_extensions?.schedule_type || 'Full-time'
     }));
   } catch (error) {
-    console.error('Error scraping Google Jobs:', error);
+    console.error('Error scraping Google Jobs:', error.message);
     return [];
   }
 };
 
-// LinkedIn Jobs scraper using public search (no API key needed)
+// LinkedIn Jobs scraper using mock data (LinkedIn doesn't allow direct scraping)
 const scrapeLinkedInJobs = async (query, location) => {
   try {
-    console.log(`Scraping LinkedIn Jobs for: ${query} in ${location}`);
+    console.log(`Generating LinkedIn Jobs for: ${query} in ${location}`);
     
-    // Using LinkedIn's public job search URL
-    const searchUrl = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}&f_TPR=r86400`; // Last 24 hours
+    // Generate realistic mock jobs based on the query
+    const jobTitles = [
+      `Senior ${query}`,
+      `${query} Specialist`,
+      `Lead ${query}`,
+      `Junior ${query}`,
+      `${query} Manager`
+    ];
+
+    const companies = [
+      'Tech Innovations Inc',
+      'Digital Solutions Corp',
+      'Future Systems Ltd',
+      'Advanced Technologies',
+      'Global Tech Partners'
+    ];
+
+    const mockJobs = jobTitles.slice(0, 3).map((title, index) => ({
+      title: title,
+      company: companies[index],
+      location: location,
+      description: `We are seeking a talented ${title.toLowerCase()} to join our dynamic team. This role involves working with cutting-edge technologies and collaborating with cross-functional teams to deliver innovative solutions.`,
+      url: `https://linkedin.com/jobs/view/${Math.floor(Math.random() * 1000000)}`,
+      source: 'LinkedIn',
+      salary: `$${60000 + index * 20000} - $${80000 + index * 20000}`,
+      posted_date: new Date(Date.now() - index * 24 * 60 * 60 * 1000).toISOString(),
+      job_type: 'Full-time'
+    }));
     
-    // Note: This is a simplified approach. In production, you'd use a proper scraper
-    // For now, we'll return mock data to demonstrate the structure
+    return mockJobs;
+  } catch (error) {
+    console.error('Error generating LinkedIn Jobs:', error.message);
+    return [];
+  }
+};
+
+// Indeed Jobs scraper using mock data
+const scrapeIndeedJobs = async (query, location) => {
+  try {
+    console.log(`Generating Indeed Jobs for: ${query} in ${location}`);
+    
     const mockJobs = [
       {
-        title: `${query} - Senior Position`,
-        company: 'Tech Company Inc',
+        title: `${query} Professional`,
+        company: 'Enterprise Solutions',
         location: location,
-        description: `We are looking for a talented ${query} to join our team. This role involves working with cutting-edge technologies and collaborating with cross-functional teams.`,
-        url: 'https://linkedin.com/jobs/view/123456789',
-        source: 'LinkedIn',
-        salary: '$80,000 - $120,000',
-        posted_date: new Date().toISOString(),
+        description: `We are seeking an experienced ${query.toLowerCase()} to join our growing team. The ideal candidate will have strong problem-solving skills and experience with modern technologies and methodologies.`,
+        url: `https://indeed.com/viewjob?jk=${Math.random().toString(36).substr(2, 9)}`,
+        source: 'Indeed',
+        salary: '$70,000 - $100,000',
+        posted_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         job_type: 'Full-time'
       },
       {
-        title: `Junior ${query}`,
-        company: 'Startup Solutions',
-        location: location,
-        description: `Entry-level position for ${query}. Great opportunity to learn and grow in a dynamic environment.`,
-        url: 'https://linkedin.com/jobs/view/987654321',
-        source: 'LinkedIn',
-        salary: '$60,000 - $80,000',
-        posted_date: new Date().toISOString(),
-        job_type: 'Full-time'
-      }
-    ];
-    
-    return mockJobs;
-  } catch (error) {
-    console.error('Error scraping LinkedIn Jobs:', error);
-    return [];
-  }
-};
-
-// Indeed Jobs scraper (free, no API key needed)
-const scrapeIndeedJobs = async (query, location) => {
-  try {
-    console.log(`Scraping Indeed Jobs for: ${query} in ${location}`);
-    
-    // Mock data for Indeed jobs
-    const mockJobs = [
-      {
-        title: `${query} Specialist`,
-        company: 'Global Corp',
-        location: location,
-        description: `We are seeking an experienced ${query} to join our growing team. The ideal candidate will have strong problem-solving skills and experience with modern technologies.`,
-        url: 'https://indeed.com/viewjob?jk=abc123def456',
+        title: `Remote ${query}`,
+        company: 'Digital Workspace',
+        location: 'Remote',
+        description: `Remote opportunity for a skilled ${query.toLowerCase()}. Work from anywhere while contributing to exciting projects and collaborating with a distributed team.`,
+        url: `https://indeed.com/viewjob?jk=${Math.random().toString(36).substr(2, 9)}`,
         source: 'Indeed',
-        salary: '$70,000 - $100,000',
-        posted_date: new Date().toISOString(),
+        salary: '$65,000 - $95,000',
+        posted_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
         job_type: 'Full-time'
       }
     ];
     
     return mockJobs;
   } catch (error) {
-    console.error('Error scraping Indeed Jobs:', error);
+    console.error('Error generating Indeed Jobs:', error.message);
     return [];
   }
 };
@@ -151,71 +168,103 @@ export const scrapeJobs = async (searchParams) => {
   let allJobs = [];
 
   try {
-    // Scrape from Google Jobs if API key is available
-    if (sources.includes('google') && config.jobSearch?.serpApiKey) {
-      const googleJobs = await scrapeGoogleJobs(query, location, config.jobSearch.serpApiKey);
-      allJobs = [...allJobs, ...googleJobs];
+    console.log(`Starting job scraping for "${query}" in "${location}"`);
+
+    // Scrape from Google Jobs if API key is available and source is selected
+    if (sources.includes('google')) {
+      try {
+        const googleJobs = await scrapeGoogleJobs(query, location, config.jobSearch?.serpApiKey);
+        allJobs = [...allJobs, ...googleJobs];
+        console.log(`Found ${googleJobs.length} jobs from Google Jobs`);
+      } catch (error) {
+        console.error('Google Jobs scraping failed:', error.message);
+      }
     }
 
-    // Scrape from LinkedIn
+    // Scrape from LinkedIn if source is selected
     if (sources.includes('linkedin')) {
-      const linkedinJobs = await scrapeLinkedInJobs(query, location);
-      allJobs = [...allJobs, ...linkedinJobs];
+      try {
+        const linkedinJobs = await scrapeLinkedInJobs(query, location);
+        allJobs = [...allJobs, ...linkedinJobs];
+        console.log(`Found ${linkedinJobs.length} jobs from LinkedIn`);
+      } catch (error) {
+        console.error('LinkedIn Jobs scraping failed:', error.message);
+      }
     }
 
-    // Scrape from Indeed
+    // Scrape from Indeed if source is selected
     if (sources.includes('indeed')) {
-      const indeedJobs = await scrapeIndeedJobs(query, location);
-      allJobs = [...allJobs, ...indeedJobs];
+      try {
+        const indeedJobs = await scrapeIndeedJobs(query, location);
+        allJobs = [...allJobs, ...indeedJobs];
+        console.log(`Found ${indeedJobs.length} jobs from Indeed`);
+      } catch (error) {
+        console.error('Indeed Jobs scraping failed:', error.message);
+      }
     }
 
     // Remove duplicates based on title and company
     const uniqueJobs = allJobs.filter((job, index, self) => 
-      index === self.findIndex(j => j.title === job.title && j.company === job.company)
+      index === self.findIndex(j => 
+        j.title.toLowerCase() === job.title.toLowerCase() && 
+        j.company.toLowerCase() === job.company.toLowerCase()
+      )
     );
 
-    console.log(`Found ${uniqueJobs.length} unique jobs`);
+    console.log(`Found ${uniqueJobs.length} unique jobs total`);
     return uniqueJobs;
 
   } catch (error) {
-    console.error('Error in job scraping:', error);
-    return [];
+    console.error('Error in job scraping:', error.message);
+    throw error;
   }
 };
 
 // Auto-add scraped jobs to the system
 export const autoAddScrapedJobs = async (searchParams) => {
-  const scrapedJobs = await scrapeJobs(searchParams);
-  const existingJobs = await readJobs();
+  try {
+    const scrapedJobs = await scrapeJobs(searchParams);
+    const existingJobs = await readJobs();
 
-  const newJobs = scrapedJobs.map(job => ({
-    id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-    title: job.title,
-    company: job.company,
-    url: job.url,
-    status: 'pending',
-    dateAdded: new Date().toISOString(),
-    source: job.source,
-    location: job.location,
-    description: job.description,
-    salary: job.salary,
-    jobType: job.job_type,
-    postedDate: job.posted_date
-  }));
+    const newJobs = scrapedJobs.map(job => ({
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      title: job.title,
+      company: job.company,
+      url: job.url,
+      status: 'pending',
+      dateAdded: new Date().toISOString(),
+      source: job.source,
+      location: job.location,
+      description: job.description,
+      salary: job.salary,
+      jobType: job.job_type,
+      postedDate: job.posted_date
+    }));
 
-  // Filter out jobs that already exist
-  const existingUrls = new Set(existingJobs.map(job => job.url));
-  const uniqueNewJobs = newJobs.filter(job => !existingUrls.has(job.url));
+    // Filter out jobs that already exist (by URL or title+company combination)
+    const existingUrls = new Set(existingJobs.map(job => job.url));
+    const existingTitleCompany = new Set(existingJobs.map(job => 
+      `${job.title.toLowerCase()}-${job.company.toLowerCase()}`
+    ));
+    
+    const uniqueNewJobs = newJobs.filter(job => 
+      !existingUrls.has(job.url) && 
+      !existingTitleCompany.has(`${job.title.toLowerCase()}-${job.company.toLowerCase()}`)
+    );
 
-  if (uniqueNewJobs.length > 0) {
-    const updatedJobs = [...existingJobs, ...uniqueNewJobs];
-    await writeJobs(updatedJobs);
-    console.log(`Added ${uniqueNewJobs.length} new jobs to the system`);
-  } else {
-    console.log('No new jobs found');
+    if (uniqueNewJobs.length > 0) {
+      const updatedJobs = [...existingJobs, ...uniqueNewJobs];
+      await writeJobs(updatedJobs);
+      console.log(`Added ${uniqueNewJobs.length} new jobs to the system`);
+    } else {
+      console.log('No new jobs found');
+    }
+
+    return uniqueNewJobs;
+  } catch (error) {
+    console.error('Error in autoAddScrapedJobs:', error.message);
+    throw error;
   }
-
-  return uniqueNewJobs;
 };
 
 // Run if called directly
