@@ -86,19 +86,24 @@ const callGroqAPI = async (prompt, apiKey, model) => {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: 30000
       }
     );
 
     return response.data.choices[0].message.content;
   } catch (error) {
-    console.error('Groq API error:', error);
-    throw error;
+    console.error('Groq API error:', error.response?.data || error.message);
+    throw new Error(`LLM API failed: ${error.response?.data?.error?.message || error.message}`);
   }
 };
 
 const callLLM = async (prompt, config) => {
   const { provider, apiKey, model } = config.llm;
+  
+  if (!apiKey || apiKey.trim() === '') {
+    throw new Error('LLM API key is not configured');
+  }
   
   switch (provider) {
     case 'groq':
@@ -111,6 +116,10 @@ const callLLM = async (prompt, config) => {
 // Email service
 const sendEmail = async (userEmail, jobData, config) => {
   const nodemailer = await import('nodemailer');
+  
+  if (!config.email.user || !config.email.password) {
+    throw new Error('Email configuration is incomplete');
+  }
   
   const transporter = nodemailer.default.createTransporter({
     service: config.email.service,
@@ -213,13 +222,29 @@ export const processSpecificJob = async (jobId, userEmail) => {
 
   let browser;
   try {
-    // Launch browser and take screenshot
-    browser = await puppeteer.launch({ headless: true });
+    // Launch browser with optimized settings for Railway
+    browser = await puppeteer.launch({ 
+      headless: 'new',
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu'
+      ]
+    });
+    
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
     
     console.log(`Navigating to: ${job.url}`);
-    await page.goto(job.url, { waitUntil: 'networkidle2' });
+    await page.goto(job.url, { 
+      waitUntil: 'networkidle2',
+      timeout: 30000
+    });
     
     // Take screenshot
     const screenshotPath = path.join(SCREENSHOTS_DIR, `${job.id}.png`);
