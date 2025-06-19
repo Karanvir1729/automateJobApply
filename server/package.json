@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "server": "node index.js",
-    "build": "echo 'No build step needed for backend'"
+    "build": "echo 'No build step needed for backend'",
+    "postinstall": "echo 'Backend dependencies installed'"
   },
   "dependencies": {
     "express": "^4.18.2",
