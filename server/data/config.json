@@ -1,1 +1,0 @@
-{"email":{"service":"gmail","user":"","password":""},"llm":{"provider":"groq","apiKey":"","model":"llama3-8b-8192"},"ocr":{"provider":"tesseract"},"resume":{"path":""}}
